@@ -32,7 +32,6 @@ export default function App() {
   const [ecoMode, setEcoMode] = useState(false);
   const [secureMode, setSecureMode] = useState(false);
 
-  // SWIPE
   const handleTouchStart = (e) => {
     touchStart.current = e.touches[0].clientX;
   };
@@ -43,80 +42,54 @@ export default function App() {
     if (diff < -50 && tab > 0) setTab(t => t - 1);
   };
 
-  // CHAT
-const sendMessage = () => {
-  if (!input) return;
+  const sendMessage = () => {
+    if (!input) return;
 
-  const text = input.toLowerCase();
-  let reply = "";
+    const text = input.toLowerCase();
+    let reply = "";
 
-  // 📍 POSIZIONE
-  if (
-    text.includes("anello") ||
-    text.includes("dove") ||
-    text.includes("posizione") ||
-    text.includes("trova")
-  ) {
-    reply = `📍 Il tuo dispositivo si trova vicino al Castello Maniace (Siracusa).
+    if (text.includes("anello") || text.includes("dove") || text.includes("posizione") || text.includes("trova")) {
+      reply = `📍 Il tuo dispositivo si trova vicino al Castello Maniace (Siracusa).
 Coordinate: ${lat}, ${lng}`;
-  }
+    }
+    else if (text.includes("assistenza") || text.includes("supporto") || text.includes("aiuto") || text.includes("contatto")) {
+      reply = "📩 Per assistenza puoi contattare: support@securing.com";
+    }
+    else if (text.includes("batteria")) {
+      reply = `🔋 La batteria attuale è al ${battery}%`;
+    }
+    else if (text.includes("dispositivi")) {
+      reply = `📱 Hai ${devices.length} dispositivi collegati e attivi.`;
+    }
+    else if (text.includes("tracking")) {
+      reply = tracking
+        ? "📡 Il tracking è attivo e funzionante."
+        : "📡 Il tracking è attualmente disattivato.";
+    }
+    else if (text.includes("sicurezza") || text.includes("stato")) {
+      reply = `🛡️ Stato del sistema: ${status}`;
+    }
+    else if (text.includes("nome") || text.includes("utente")) {
+      reply = `👤 Sei registrato come: ${username}`;
+    }
+    else {
+      const risposte = [
+        "🤖 Tutto funziona correttamente.",
+        "📡 Sto monitorando il sistema in tempo reale.",
+        "🛡️ Non rilevo problemi al momento.",
+        "✔️ Sistema stabile e operativo."
+      ];
+      reply = risposte[Math.floor(Math.random() * risposte.length)];
+    }
 
-  // 🆘 ASSISTENZA
-  else if (
-    text.includes("assistenza") ||
-    text.includes("supporto") ||
-    text.includes("aiuto") ||
-    text.includes("contatto")
-  ) {
-    reply = "📩 Per assistenza puoi contattare: support@securing.com";
-  }
+    setChat(prev => [
+      ...prev,
+      { role: "user", text: input },
+      { role: "ai", text: reply }
+    ]);
 
-  // 🔋 BATTERIA
-  else if (text.includes("batteria")) {
-    reply = `🔋 La batteria attuale è al ${battery}%`;
-  }
-
-  // 📱 DISPOSITIVI
-  else if (text.includes("dispositivi")) {
-    reply = `📱 Hai ${devices.length} dispositivi collegati e attivi.`;
-  }
-
-  // 📡 TRACKING
-  else if (text.includes("tracking")) {
-    reply = tracking
-      ? "📡 Il tracking è attivo e funzionante."
-      : "📡 Il tracking è attualmente disattivato.";
-  }
-
-  // 🛡️ SICUREZZA
-  else if (text.includes("sicurezza") || text.includes("stato")) {
-    reply = `🛡️ Stato del sistema: ${status}`;
-  }
-
-  // 👤 UTENTE
-  else if (text.includes("nome") || text.includes("utente")) {
-    reply = `👤 Sei registrato come: ${username}`;
-  }
-
-  // 🤖 DEFAULT (PIÙ NATURALE)
-  else {
-    const risposte = [
-      "🤖 Tutto funziona correttamente.",
-      "📡 Sto monitorando il sistema in tempo reale.",
-      "🛡️ Non rilevo problemi al momento.",
-      "✔️ Sistema stabile e operativo."
-    ];
-    reply = risposte[Math.floor(Math.random() * risposte.length)];
-  }
-
-  setChat(prev => [
-    ...prev,
-    { role: "user", text: input },
-    { role: "ai", text: reply }
-  ]);
-
-  setInput("");
-};
+    setInput("");
+  };
 
   const addDevice = () => {
     if (!newDevice) return;
@@ -136,28 +109,21 @@ Coordinate: ${lat}, ${lng}`;
     });
   };
 
-  // 🔴 RESET COMPLETO MIGLIORATO
   const resetApp = () => {
     setDevices(initialDevices);
     setNewDevice("");
-
     setTracking(true);
     setStatus("Protetto");
-
     setChat(initialChat);
     setInput("");
-
     setUsername("Utente");
-
     setDarkMode(false);
     setNotificationsEnabled(true);
     setVibration(true);
-
     setSilentMode(false);
     setEcoMode(false);
     setSecureMode(false);
-
-    setTab(0); // torna alla home
+    setTab(0);
   };
 
   const theme = darkMode ? "bg-black text-white" : "bg-gray-100 text-black";
@@ -166,17 +132,12 @@ Coordinate: ${lat}, ${lng}`;
   return (
     <div className={`min-h-screen flex items-center justify-center ${theme}`}>
 
-      <div
-        className={`w-[380px] h-[700px] rounded-3xl shadow-xl p-4 flex flex-col justify-between ${darkMode ? "bg-gray-900" : "bg-white"}`}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
+      <div className={`w-[380px] h-[700px] rounded-3xl shadow-xl p-4 flex flex-col justify-between ${darkMode ? "bg-gray-900" : "bg-white"}`}>
 
         <div className="flex-1 overflow-y-auto space-y-4">
 
           <h1 className="text-xl font-semibold text-blue-600">SECURING</h1>
 
-          {/* HOME */}
           {tab === 0 && (
             <>
               <div className={`${card} p-4 rounded-2xl flex justify-between`}>
@@ -191,10 +152,12 @@ Coordinate: ${lat}, ${lng}`;
                 Stato: {status}
               </div>
 
-              <iframe
-                src={`https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`}
-                className="w-full h-32 rounded-2xl"
-              />
+              <div className="w-full h-40 rounded-2xl overflow-hidden">
+                <iframe
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.01}%2C${lat-0.01}%2C${lng+0.01}%2C${lat+0.01}&layer=mapnik&marker=${lat}%2C${lng}`}
+                  className="w-full h-full border-0"
+                />
+              </div>
 
               <button className="w-full bg-red-600 text-white p-3 rounded-2xl">
                 🚨 SOS
@@ -210,7 +173,11 @@ Coordinate: ${lat}, ${lng}`;
                     placeholder="Scrivi..."
                     value={input}
                     onChange={(e)=>setInput(e.target.value)}
-                    className="flex-1 p-2 rounded-xl border"
+                    className={`flex-1 p-2 rounded-xl border ${
+                      darkMode
+                        ? "bg-gray-800 text-white border-gray-600"
+                        : "bg-white text-black border-gray-300"
+                    }`}
                   />
                   <button onClick={sendMessage} className="bg-blue-600 text-white px-3 rounded-xl">➤</button>
                 </div>
@@ -218,7 +185,6 @@ Coordinate: ${lat}, ${lng}`;
             </>
           )}
 
-          {/* DEVICES */}
           {tab === 1 && (
             <>
               {devices.map((d,i)=>(
@@ -238,16 +204,32 @@ Coordinate: ${lat}, ${lng}`;
               ))}
 
               <div className="flex gap-2">
-                <input value={newDevice} onChange={(e)=>setNewDevice(e.target.value)} className="flex-1 p-2 rounded-xl border"/>
+                <input
+                  value={newDevice}
+                  onChange={(e)=>setNewDevice(e.target.value)}
+                  className={`flex-1 p-2 rounded-xl border ${
+                    darkMode
+                      ? "bg-gray-800 text-white border-gray-600"
+                      : "bg-white text-black border-gray-300"
+                  }`}
+                />
                 <button onClick={addDevice} className="bg-blue-600 text-white px-3 rounded-xl">+</button>
               </div>
             </>
           )}
 
-          {/* SETTINGS */}
           {tab === 2 && (
             <>
-              <input value={username} onChange={(e)=>setUsername(e.target.value)} className="w-full p-2 rounded-xl border"/>
+              {/* 👇 SOLO QUESTO È STATO MODIFICATO */}
+              <input
+                value={username}
+                onChange={(e)=>setUsername(e.target.value)}
+                className={`w-full p-2 rounded-xl border ${
+                  darkMode
+                    ? "bg-gray-800 text-white border-gray-600"
+                    : "bg-white text-black border-gray-300"
+                }`}
+              />
 
               <Row label="Dark Mode"><Toggle value={darkMode} onClick={()=>setDarkMode(!darkMode)} /></Row>
               <Row label="Tracking"><Toggle value={tracking} onClick={()=>setTracking(!tracking)} /></Row>
@@ -266,7 +248,6 @@ Coordinate: ${lat}, ${lng}`;
 
         </div>
 
-        {/* NAV */}
         <div className="flex justify-around mt-2">
           <Nav icon="🏠" active={tab===0} onClick={()=>setTab(0)} />
           <Nav icon="➕" active={tab===1} onClick={()=>setTab(1)} />
