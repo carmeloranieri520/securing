@@ -142,7 +142,7 @@ Coordinate: ${lat}, ${lng}`;
             <>
               <div className={`${card} p-4 rounded-2xl flex justify-between`}>
                 <div>
-                  <p>Batteria</p>
+                  <p>Pennacchio</p>
                   <h2>{battery}%</h2>
                 </div>
                 <Toggle value={tracking} onClick={()=>setTracking(!tracking)} />
